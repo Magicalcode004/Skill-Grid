@@ -1,0 +1,185 @@
+/* Page Background */
+.auth-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f6f9; /* Halka sa greyish-blue bg */
+  padding: 40px 20px;
+}
+
+/* Bada Container jo 2 hisso me bategi */
+.auth-container {
+  display: flex;
+  width: 100%;
+  max-width: 1000px; /* Card ki chaurai */
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Taki image rounded corners ke andar rahe */
+}
+
+/* --- LEFT SIDE (Image + Design) --- */
+.auth-left {
+  flex: 1; /* Aadha hissa lega */
+  /* Background image aur uske upar dark transparent gradient overlay */
+  background: linear-gradient(rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.85)), 
+              url('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-left-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.auth-left-content p {
+  font-size: 1.1rem;
+  color: #cccccc;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.auth-features {
+  list-style: none;
+  padding: 0;
+}
+
+.auth-features li {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* --- RIGHT SIDE (Form) --- */
+.auth-right {
+  flex: 1; /* Aadha hissa lega */
+  padding: 50px 40px;
+  background-color: #ffffff;
+}
+
+/* Headers & Forms (Pichla wala same) */
+.auth-header {
+  text-align: left; /* Heading ab left align hongi */
+  margin-bottom: 25px;
+}
+
+.auth-header h2 {
+  font-size: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+}
+
+.auth-header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.input-group input,
+.input-group select {
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #fdb441;
+  box-shadow: 0 0 0 3px rgba(253, 180, 65, 0.2);
+}
+
+.input-group input[type="file"] {
+  padding: 8px;
+  background-color: #fcfcfc;
+  cursor: pointer;
+  color: #555;
+}
+
+.auth-btn {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin-top: 15px;
+}
+
+.auth-btn:hover {
+  background-color: #fdb441;
+  color: #1a1a1a;
+}
+
+.auth-footer-text {
+  text-align: center;
+  margin-top: 25px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.auth-footer-text a {
+  color: #fdb441;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Animation */
+.animate-slide-down {
+  animation: formSlideDown 0.3s ease-out forwards;
+}
+
+@keyframes formSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column; /* Mobile par upar niche ho jayenge */
+  }
+  .auth-left {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .auth-features li {
+    justify-content: center;
+  }
+  .auth-right {
+    padding: 30px 20px;
+  }
+}

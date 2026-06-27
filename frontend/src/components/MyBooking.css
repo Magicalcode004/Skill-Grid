@@ -1,0 +1,96 @@
+.my-bookings-page {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.bookings-header {
+  background-color: #1a1a1a;
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  margin-bottom: 40px;
+  border-bottom: 5px solid #fdb441;
+}
+
+.bookings-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.bookings-header p {
+  color: #fdb441;
+  font-size: 1.1rem;
+}
+
+.bookings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.booking-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  border-left: 6px solid #ccc; /* Default Pending */
+}
+
+/* Status Colors */
+.booking-card.accepted { border-left-color: #28a745; }
+.booking-card.declined { border-left-color: #dc3545; }
+.booking-card.pending { border-left-color: #fdb441; }
+
+.booking-status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.booking-card.accepted .booking-status-badge { background-color: #28a745; }
+.booking-card.declined .booking-status-badge { background-color: #dc3545; }
+.booking-card.pending .booking-status-badge { background-color: #fdb441; color: #1a1a1a; }
+
+.booking-details h3 {
+  color: #1a1a1a;
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.booking-details p {
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.worker-contact {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #e9f7ef;
+  color: #1e7e34;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.no-bookings, .loading-text {
+  text-align: center;
+  margin-top: 50px;
+  color: #666;
+  font-size: 1.2rem;
+}

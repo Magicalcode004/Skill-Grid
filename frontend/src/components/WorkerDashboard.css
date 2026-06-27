@@ -1,0 +1,149 @@
+/* Page Setup */
+.worker-dash-page {
+  min-height: calc(100vh - 80px);
+  background-color: #f4f6f9;
+  padding-bottom: 60px;
+}
+
+.worker-dash-header {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.worker-dash-header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  color: #fdb441; /* Brand Yellow/Orange */
+}
+
+.worker-dash-header p {
+  font-size: 1.1rem;
+  color: #ccc;
+}
+
+.worker-dash-container {
+  max-width: 900px; /* Thoda chota container banaya hai taaki details saaf dikhein */
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.worker-dash-container h2 {
+  color: #333;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #fdb441;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Request Cards Container */
+.requests-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Individual Request Card */
+.request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border-left: 5px solid #fdb441; /* Default Yellow Border for Pending */
+  transition: all 0.3s ease;
+}
+
+/* Agar accept/decline ho jaye toh card ka color halka change hoga */
+.request-card.accepted { border-left-color: #28a745; background-color: #f4fcf5; }
+.request-card.declined { border-left-color: #dc3545; background-color: #fff5f5; opacity: 0.7; }
+
+/* Info Section */
+.request-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.4rem;
+  color: #1a1a1a;
+}
+
+.req-location, .req-date {
+  margin: 0 0 5px 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.req-problem {
+  margin-top: 15px;
+  background-color: #f9f9f9;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: #444;
+  font-size: 0.95rem;
+  border: 1px dashed #ccc;
+}
+
+/* Actions Section */
+.request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 130px;
+}
+
+.btn-accept, .btn-decline {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Accept Button (Green) */
+.btn-accept {
+  background-color: #e6f4ea;
+  color: #1e7e34;
+  border: 1px solid #c3e6cb;
+}
+.btn-accept:hover { background-color: #28a745; color: white; }
+
+/* Decline Button (Red) */
+.btn-decline {
+  background-color: #fceceb;
+  color: #bd2130;
+  border: 1px solid #f5c6cb;
+}
+.btn-decline:hover { background-color: #dc3545; color: white; }
+
+/* Status Badges */
+.status-badge {
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.status-badge.accepted { background-color: #d4edda; color: #155724; }
+.status-badge.declined { background-color: #f8d7da; color: #721c24; }
+
+/* Mobile Responsive */
+@media (max-width: 650px) {
+  .request-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .request-actions {
+    margin-top: 20px;
+    width: 100%;
+    flex-direction: row;
+  }
+  .btn-accept, .btn-decline { flex: 1; }
+}

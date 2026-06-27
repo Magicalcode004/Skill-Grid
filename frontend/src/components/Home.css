@@ -1,0 +1,168 @@
+/* Pura Home Page Background */
+.home-wrapper {
+  background-color: #ffffff;
+  min-height: calc(100vh - 80px); /* Navbar ke baad bachi hui height */
+  overflow: hidden; /* Shape bahar na nikle */
+  position: relative;
+}
+
+.main-container {
+  display: flex;
+  align-items: center;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 80vh;
+}
+
+/* --- LEFT SIDE (Text) --- */
+.text-section {
+  flex: 1;
+  z-index: 2; /* Shape ke upar rakhne ke liye */
+  padding-left: 5%;
+}
+
+.text-section h1 {
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.highlight-text {
+  color: #fdb441; /* Food image jaisa yellow/orange color */
+}
+
+.sub-text {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 40px;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+/* Buttons */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-yellow {
+  background-color: #fdb441;
+  color: #1a1a1a;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-yellow:hover {
+  background-color: #e59f35;
+}
+
+.btn-black {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-black:hover {
+  background-color: #333;
+}
+
+
+/* --- RIGHT SIDE (Visuals) --- */
+.visual-section {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 🟠 Piche wala bada design shape */
+.orange-background-shape {
+  position: absolute;
+  right: -20%;
+  bottom: -30%;
+  width: 900px;
+  height: 800px;
+  background-color: #fdb441;
+  /* Is border-radius se bilkul screenshot jaisa curve banega */
+  border-top-left-radius: 300px; 
+  border-bottom-left-radius: 100px;
+  transform: rotate(-10deg);
+  z-index: 0;
+}
+
+/* Gol Image Box */
+.circular-image-container {
+  position: relative;
+  z-index: 1;
+}
+
+.main-circle-img {
+  width: 450px;
+  height: 450px;
+  object-fit: cover; /* Image fate na */
+  border-radius: 50%; /* Image ko gol (circle) banane ke liye */
+  border: 10px solid transparent; /* Halke space ke liye */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2); /* Niche halki shadow */
+}
+
+/* 🏷️ Floating Badges */
+.badge {
+  position: absolute;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: #333;
+  animation: float 4s ease-in-out infinite;
+}
+
+.top-badge {
+  top: 40px;
+  right: 10px;
+}
+
+.bottom-badge {
+  bottom: 50px;
+  left: -30px;
+  border-radius: 15px; /* Screenshot jaisa thoda chokor */
+}
+
+.badge-avatar {
+  font-size: 1.8rem;
+}
+
+.stars {
+  color: #fdb441;
+  font-size: 0.9rem;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Responsive (Choti screen par theek dikhne ke liye) */
+@media (max-width: 968px) {
+  .main-container { flex-direction: column; text-align: center; }
+  .text-section { padding-left: 0; margin-bottom: 50px; }
+  .action-buttons { justify-content: center; }
+  .orange-background-shape { display: none; } /* Mobile pe design shape hide kar denge */
+  .main-circle-img { width: 300px; height: 300px; }
+}

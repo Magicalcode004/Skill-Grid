@@ -1,0 +1,161 @@
+/* Page Background & Header (Same as before) */
+.dashboard-page {
+  min-height: calc(100vh - 80px);
+  background-color: #f4f6f9;
+  padding-bottom: 60px;
+}
+
+.dashboard-header {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.dashboard-header h1 { font-size: 2.5rem; margin-bottom: 8px; }
+.dashboard-header p { color: #fdb441; font-size: 1.1rem; margin: 0; }
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.dashboard-container h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #fdb441;
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+/* --- NEW COMPACT ROW/COLUMN LAYOUT --- */
+.worker-list-layout {
+  display: grid;
+  /* 2 Columns me baant diya hai. Agar space kam hogi toh apne aap 1 column ho jayega */
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 20px;
+}
+
+/* Individual Row Card (Horizontal Flexbox) */
+.worker-row-card {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.2s ease-in-out;
+}
+
+.worker-row-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: #fdb441;
+}
+
+/* 🖼️ Left: Avatar Image (Choti aur Gol) */
+.worker-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fdb441;
+  margin-right: 20px;
+}
+
+/* 📝 Center: Text Information */
+.worker-info {
+  flex: 1; /* Yeh bachi hui poori jagah le lega */
+  text-align: left;
+}
+
+.worker-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.small-rating {
+  font-size: 0.85rem;
+  background-color: #fff8e1; /* Halka peela background */
+  color: #d84315;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.worker-category {
+  color: #fdb441;
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin: 0 0 3px 0;
+}
+
+.worker-exp {
+  color: #777;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* 🔘 Right: Button */
+.worker-action {
+  margin-left: 15px;
+}
+
+.book-btn-small {
+  padding: 10px 20px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.book-btn-small:hover {
+  background-color: #fdb441;
+  color: #1a1a1a;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .worker-list-layout {
+    grid-template-columns: 1fr; /* Mobile par 1 column */
+  }
+  
+  .worker-row-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .worker-avatar {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+  
+  .worker-info {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .worker-info h3 {
+    justify-content: center;
+  }
+  
+  .worker-action {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .book-btn-small {
+    width: 100%;
+  }
+}
