@@ -3,60 +3,81 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 const Register = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    role: 'client',
-    profession: '',
-    experience: ''
+    name: '', email: '', phone: '', password: '',
+    role: 'client', profession: '', experience: '', location: ''
   });
+  const [photo, setPhoto] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     
+    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+      return alert(" Please fill in all the basic details (Name, Email, Phone, Password).");
+    }
+
+    
+    if (!photo) {
+      return alert(" Profile Picture is mandatory! Please upload a photo.");
+    }
+
+   
+    if (formData.role === 'worker') {
+      if (!formData.profession || !formData.experience || !formData.location) {
+        return alert(" As a worker, you must provide your Profession, Experience, and Location.");
+      }
+    }
+
+    
+    const data = new FormData();
+    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+    if (photo) data.append('photo', photo);
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
+        body: data
       });
 
-      
       const contentType = response.headers.get("content-type");
-      let data;
-      
+      let result;
       if (contentType && contentType.includes("application/json")) {
-        data = await response.json(); 
+        result = await response.json();
       } else {
-        data = { message: await response.text() }; 
+        result = { message: await response.text() };
       }
 
       if (response.ok) {
-        alert(" " + data.message);
+        alert(" " + result.message);
         navigate('/login');
       } else {
-        alert(" Error: " + data.message);
+        alert(" Error: " + result.message);
       }
     } catch (error) {
       console.error("Fetch Error:", error);
-      alert("Server Close?");
+      alert("Server Closed or Unreachable!");
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-container">
-        
-        
+
         <div className="auth-left">
           <div className="auth-left-content">
             <h2>Start Your Journey With <span style={{ color: '#fdb441' }}>SkillGrid</span></h2>
@@ -64,7 +85,6 @@ const handleSubmit = async (e) => {
           </div>
         </div>
 
-        {/* RIGHT SIDE: Form */}
         <div className="auth-right">
           <div className="auth-header">
             <h2>Create an Account</h2>
@@ -72,6 +92,7 @@ const handleSubmit = async (e) => {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
+
             <div className="input-group">
               <label>Full Name</label>
               <input type="text" name="name" placeholder='Enter your name' onChange={handleChange} required />
@@ -100,24 +121,38 @@ const handleSubmit = async (e) => {
               </select>
             </div>
 
-            
             {formData.role === 'worker' && (
               <div className="animate-slide-down">
-                <div className="input-group" style={{ marginBottom: '15px' }}>
+                <div className="input-group">
                   <label>Profession (e.g., Electrician, Plumber)</label>
                   <input type="text" name="profession" onChange={handleChange} required />
                 </div>
+
                 <div className="input-group">
-  <label>Experience (in Years, e.g., 5)</label>
-  <input 
-    type="number" 
-    name="experience" 
-    placeholder="Enter Only in number (e.g., 2)" 
-    onChange={handleChange} 
-    required 
-    min="0" 
-  />
-</div>
+                  <label>Experience (in Years)</label>
+                  <input type="number" name="experience" placeholder="e.g. 5" onChange={handleChange} required min="0" />
+                </div>
+
+              
+                <div className="input-group">
+                  <label>Location / Area</label>
+                  <input type="text" name="location" placeholder="e.g. Boddom Bazar, Hazaribagh" onChange={handleChange} required />
+                </div>
+
+                <div className="input-group">
+                  <label>Profile Photo</label>
+                  <input
+                    type="file"
+                    accept="image/jpeg, image/png, image/webp"
+                    onChange={handlePhotoChange}
+                    style={{ padding: '8px', border: '2px dashed #fdb441', borderRadius: '8px', width: '100%' }}
+                  />
+                  {preview && (
+                    <img src={preview} alt="Preview"
+                      style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px', border: '3px solid #fdb441' }}
+                    />
+                  )}
+                </div>
               </div>
             )}
 

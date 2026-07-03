@@ -1,161 +1,154 @@
-/* Page Background & Header (Same as before) */
 .dashboard-page {
-  min-height: calc(100vh - 80px);
-  background-color: #f4f6f9;
-  padding-bottom: 60px;
+    min-height: 100vh;
+    background: #f5f5f5;
+    padding-bottom: 60px;
 }
 
 .dashboard-header {
-  background-color: #1a1a1a;
-  color: #ffffff;
-  text-align: center;
-  padding: 40px 20px;
+    text-align: center;
+    padding: 40px 20px 30px;
+    background: #fff;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.dashboard-header h1 { font-size: 2.5rem; margin-bottom: 8px; }
-.dashboard-header p { color: #fdb441; font-size: 1.1rem; margin: 0; }
+.dashboard-header h1 {
+    font-size: 2rem;
+    color: #1a1a2e;
+    font-weight: 800;
+    margin: 0 0 8px;
+}
+
+.dashboard-header h1 span {
+    color: #fdb441;
+}
+
+.dashboard-header p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0 0 18px;
+}
+
+.search-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.search-bar:focus {
+    border-color: #fdb441;
+}
 
 .dashboard-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .dashboard-container h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #fdb441;
-  display: inline-block;
-  padding-bottom: 8px;
+    font-size: 1.4rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+    font-weight: 700;
 }
 
-/* --- NEW COMPACT ROW/COLUMN LAYOUT --- */
-.worker-list-layout {
-  display: grid;
-  /* 2 Columns me baant diya hai. Agar space kam hogi toh apne aap 1 column ho jayega */
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 20px;
+/* GRID */
+.workers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 28px;
 }
 
-/* Individual Row Card (Horizontal Flexbox) */
-.worker-row-card {
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  padding: 15px 20px;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: all 0.2s ease-in-out;
+/* CARD */
+.worker-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.worker-row-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  border-color: #fdb441;
+.worker-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.13);
 }
 
-/* 🖼️ Left: Avatar Image (Choti aur Gol) */
-.worker-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fdb441;
-  margin-right: 20px;
+/* PHOTO */
+.card-photo-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background: #f0f0f0;
 }
 
-/* 📝 Center: Text Information */
-.worker-info {
-  flex: 1; /* Yeh bachi hui poori jagah le lega */
-  text-align: left;
-}
-
-.worker-info h3 {
-  margin: 0 0 5px 0;
-  font-size: 1.2rem;
-  color: #1a1a1a;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.small-rating {
-  font-size: 0.85rem;
-  background-color: #fff8e1; /* Halka peela background */
-  color: #d84315;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.worker-category {
-  color: #fdb441;
-  font-weight: bold;
-  font-size: 0.95rem;
-  margin: 0 0 3px 0;
-}
-
-.worker-exp {
-  color: #777;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-/* 🔘 Right: Button */
-.worker-action {
-  margin-left: 15px;
-}
-
-.book-btn-small {
-  padding: 10px 20px;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.book-btn-small:hover {
-  background-color: #fdb441;
-  color: #1a1a1a;
-}
-
-/* Mobile Responsive */
-@media (max-width: 600px) {
-  .worker-list-layout {
-    grid-template-columns: 1fr; /* Mobile par 1 column */
-  }
-  
-  .worker-row-card {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .worker-avatar {
-    margin-right: 0;
-    margin-bottom: 15px;
-  }
-  
-  .worker-info {
-    text-align: center;
-    margin-bottom: 15px;
-  }
-
-  .worker-info h3 {
-    justify-content: center;
-  }
-  
-  .worker-action {
-    margin-left: 0;
+.card-photo {
     width: 100%;
-  }
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+}
 
-  .book-btn-small {
+.worker-card:hover .card-photo {
+    transform: scale(1.04);
+}
+
+.rating-badge {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: #fff;
+    border-radius: 30px;
+    padding: 5px 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+/* INFO */
+.card-info {
+    padding: 18px 20px 20px;
+}
+
+.worker-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0 0 10px;
+}
+
+.worker-profession,
+.worker-location,
+.worker-jobs {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+/* BOOK BUTTON */
+.book-btn {
     width: 100%;
-  }
+    margin-top: 14px;
+    padding: 13px;
+    background: #fdb441;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+}
+
+.book-btn:hover {
+    background: #f0a820;
+    transform: scale(1.02);
 }

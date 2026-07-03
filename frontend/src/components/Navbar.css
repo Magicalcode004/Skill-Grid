@@ -1,41 +1,132 @@
+/* Navbar.css - Ultra Premium Dark Theme (Spaced Out & Thicker) */
+
 .navbar {
-  padding: 15px 30px;
-  background-color: #1a1a1a;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #1a1a1a; 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid #333; 
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100px; /* 👈 YAHAN CHANGE KIYA HAI (Navbar Mota Ho Gaya) */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Logo Styling */
+.navbar-logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05); 
+}
+
+/* Links Styling */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 45px; /* 👈 YAHAN CHANGE KIYA HAI (Links Ke Beech Gap Badhaya) */
 }
 
 .nav-item {
-  color: white;
   text-decoration: none;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  transition: all 0.3s ease;
+  color: #e0e0e0; 
+  font-weight: 600;
+  font-size: 1.1rem; /* 👈 Text halka sa bada kiya hai */
+  transition: color 0.3s ease;
+  position: relative;
+  letter-spacing: 0.8px; /* 👈 Text ke letters me gap */
 }
 
+/* Hover Effect (Underline Animation) */
 .nav-item:hover {
-  color: #ff9800;
+  color: #fdb441; 
 }
 
-/* Register Button */
-.register-btn {
-  padding: 8px 15px;
-  background-color: #ff9800;
-  color: #1a1a1a !important;
+.nav-item:not(.nav-btn)::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: -10px; /* 👈 Underline thoda aur niche kiya hai space ke hisaab se */
+  left: 0;
+  background-color: #fdb441;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(253, 180, 65, 0.5); 
+}
+
+.nav-item:not(.nav-btn):hover::after {
+  width: 100%;
+}
+
+/* Special Links Styling */
+.admin-link {
+  color: #ff4d4f !important;
+}
+
+.admin-link::after {
+  background-color: #ff4d4f !important;
+  box-shadow: 0 0 8px rgba(255, 77, 79, 0.5) !important;
+}
+
+.profile-link {
+  color: #ffffff;
+}
+
+/* Premium Buttons (Register / Logout) */
+.nav-btn {
+  padding: 12px 28px; /* 👈 Button ko bhi thoda bada kiya hai */
+  border-radius: 8px;
   font-weight: bold;
-  border-radius: 5px;
-  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
 }
 
-.register-btn:hover {
-  background-color: #e68a00;
-  color: white !important;
+.register-btn, .logout-btn {
+  background-color: #fdb441;
+  color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(253, 180, 65, 0.25);
+}
+
+.register-btn:hover, .logout-btn:hover {
+  background-color: #ff9f00; 
+  color: #1a1a1a !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(253, 180, 65, 0.45);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+  .navbar-container {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
 }

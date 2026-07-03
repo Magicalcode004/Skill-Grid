@@ -1,4 +1,4 @@
-/* Main Footer Background */
+
 .footer-section {
   background-color: #1a1a1a;
   color: #ffffff;
@@ -6,7 +6,7 @@
   font-family: Arial, sans-serif;
 }
 
-/* Footer Grid Layout */
+
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -17,7 +17,7 @@
   gap: 30px;
 }
 
-/* Individual Columns */
+
 .footer-col {
   flex: 1;
   min-width: 220px;
@@ -33,13 +33,13 @@
 
 .footer-col h3 {
   font-size: 1.2rem;
-  color: #fdb441; /* Theme yellow color */
+  color: #fdb441; 
   margin-bottom: 20px;
   position: relative;
   padding-bottom: 10px;
 }
 
-/* Heading ke niche ek choti si yellow line */
+
 .footer-col h3::after {
   content: '';
   position: absolute;
@@ -56,7 +56,7 @@
   margin-bottom: 12px;
 }
 
-/* Links List Styling */
+
 .footer-col ul {
   list-style: none;
   padding: 0;
@@ -76,13 +76,13 @@
   gap: 8px;
 }
 
-/* Hover Effect par color yellow hoga aur thoda aage khiskega */
+
 .footer-col ul li a:hover {
   color: #fdb441;
   transform: translateX(5px);
 }
 
-/* Bottom Copyright Strip */
+
 .footer-bottom {
   background-color: #111111;
   text-align: center;
@@ -97,7 +97,7 @@
   font-size: 0.9rem;
 }
 
-/* Mobile Responsive */
+
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;

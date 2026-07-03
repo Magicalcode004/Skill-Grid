@@ -1,4 +1,4 @@
-/* Background ke piche ka dark blur effect */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -10,10 +10,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Sabse upar dikhane ke liye */
+  z-index: 1000;
 }
 
-/* Main Popup Box */
+
 .modal-content {
   background: #ffffff;
   padding: 30px;
@@ -24,7 +24,7 @@
   box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-/* Close Button (X) */
+
 .close-btn {
   position: absolute;
   top: 15px;
@@ -38,7 +38,7 @@
 }
 
 .close-btn:hover {
-  color: #dc3545; /* Red color hover pe */
+  color: #dc3545; 
 }
 
 .modal-content h2 {
@@ -50,7 +50,7 @@
   padding-bottom: 5px;
 }
 
-/* Mini Profile inside Modal */
+
 .worker-mini-profile {
   display: flex;
   align-items: center;
@@ -81,7 +81,7 @@
   color: #666;
 }
 
-/* Form Styles */
+
 .booking-form {
   display: flex;
   flex-direction: column;
@@ -95,7 +95,7 @@
   border-radius: 8px;
   outline: none;
   font-family: Arial, sans-serif;
-  resize: none; /* User isko bada-chota na kar paye */
+  resize: none; 
 }
 
 .booking-form input:focus,
@@ -120,7 +120,7 @@
   background-color: #e59f35;
 }
 
-/* Pop In Animation */
+
 .animate-pop-in {
   animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }

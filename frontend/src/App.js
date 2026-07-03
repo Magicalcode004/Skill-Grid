@@ -10,7 +10,8 @@ import WorkerDashboard from './components/WorkerDashboard';
 import About from './components/About';
 import MyBookings from './components/MyBooking';
 import PrivateRoute from './components/PrivateRoute';
-
+import AdminDashboard from './components/AdminDashboard';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/worker-dashboard" element={<WorkerDashboard/>}/>
         <Route path="/my-bookings" element={<MyBookings/>}/>
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
       
       <About/>

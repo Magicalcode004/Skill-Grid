@@ -1,28 +1,28 @@
-/* Page Background */
+
 .auth-page {
   min-height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f4f6f9; /* Halka sa greyish-blue bg */
+  background-color: #f4f6f9; 
   padding: 40px 20px;
 }
 
-/* Bada Container jo 2 hisso me bategi */
+
 .auth-container {
   display: flex;
   width: 100%;
-  max-width: 1000px; /* Card ki chaurai */
+  max-width: 1000px; 
   background-color: #ffffff;
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Taki image rounded corners ke andar rahe */
+  overflow: hidden; 
 }
 
-/* --- LEFT SIDE (Image + Design) --- */
+
 .auth-left {
-  flex: 1; /* Aadha hissa lega */
-  /* Background image aur uske upar dark transparent gradient overlay */
+  flex: 1; 
+ 
   background: linear-gradient(rgba(26, 26, 26, 0.8), rgba(26, 26, 26, 0.85)), 
               url('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
   background-size: cover;
@@ -61,16 +61,16 @@
 }
 
 
-/* --- RIGHT SIDE (Form) --- */
+
 .auth-right {
-  flex: 1; /* Aadha hissa lega */
+  flex: 1; 
   padding: 50px 40px;
   background-color: #ffffff;
 }
 
-/* Headers & Forms (Pichla wala same) */
+
 .auth-header {
-  text-align: left; /* Heading ab left align hongi */
+  text-align: left; 
   margin-bottom: 25px;
 }
 
@@ -167,10 +167,10 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile Responsive */
+
 @media (max-width: 768px) {
   .auth-container {
-    flex-direction: column; /* Mobile par upar niche ho jayenge */
+    flex-direction: column; 
   }
   .auth-left {
     padding: 40px 20px;

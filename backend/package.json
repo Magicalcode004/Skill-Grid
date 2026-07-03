@@ -4,7 +4,7 @@
   "description": "college project ",
   "license": "ISC",
   "author": "sonal kumar",
-  "type": "common js",
+  "type": "commonjs",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,8 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mogoose": "^0.0.1-security",
-    "mongoose": "^9.7.0"
+    "mongoose": "^9.7.0",
+    "multer": "^2.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

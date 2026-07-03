@@ -6,30 +6,15 @@ const Dashboard = () => {
   
   const [workers, setWorkers] = useState([]);
   const [selectedWorker, setSelectedWorker] = useState(null);
-  
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleBookClick = (worker) =>
-  {
-    const token = localStorage.getItem('token');
-
-    if(!token)
-    {
-      alert("Please, Log in First");
-    }else{
-      setSelectedWorker(worker);
-    }
-  };
-
-  //use effect for fecthing data from database show on every first rendal bcs of useeffect empty array
   useEffect(() => {
     const fetchWorkers = async () => {
       try {
-        
         const response = await fetch("http://localhost:5000/api/workers/all");
-        
         if (response.ok) {
           const data = await response.json();
-          setWorkers(data); 
+          setWorkers(data);
         } else {
           console.error("Failed to fetch workers");
         }
@@ -37,48 +22,84 @@ const Dashboard = () => {
         console.error("Server connection error:", error);
       }
     };
-
     fetchWorkers();
-  }, []); 
+  }, []);
+
+  
+  const handleBookClick = (worker) => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    alert("For Booking, Login First");
+    
+  } else {
+    setSelectedWorker(worker); 
+  }
+};
+
+  const filtered = workers.filter(w =>
+    w.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (w.profession && w.profession.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
-        <h1>Welcome to SkillGrid Dashboard</h1>
+        <h1>Welcome to <span>SkillGrid</span> Dashboard</h1>
         <p>Book verified professionals near you instantly.</p>
+        <input
+          className="search-bar"
+          type="text"
+          placeholder="🔍  Search by name or profession..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="dashboard-container">
         <h2>Available Professionals</h2>
-        
-        {workers.length === 0 ? (
-          <p style={{textAlign: 'center', marginTop: '50px', fontSize: '1.2rem', color: '#666'}}>
+
+        {filtered.length === 0 ? (
+          <p style={{ textAlign: 'center', marginTop: '50px', fontSize: '1.2rem', color: '#666' }}>
             Loading professionals... (Or no registration till now..)
           </p>
         ) : (
-          <div className="worker-list-layout">
-            {workers.map(worker => (
-              <div className="worker-row-card" key={worker._id}>
-                
-                
-                <img 
-                  src={`https://ui-avatars.com/api/?name=${worker.name}&background=fdb441&color=1a1a1a&bold=true`} 
-                  alt={worker.name} 
-                  className="worker-avatar" 
-                />
-                
-                <div className="worker-info">
-                  <h3>{worker.name} <span className="small-rating">⭐ 4.5</span></h3>
-                  
-                  <p className="worker-category">{worker.profession}</p>
-                  <p className="worker-exp">Exp: {worker.experience}</p>
+          <div className="workers-grid">
+            {filtered.map(worker => (
+              <div className="worker-card" key={worker._id}>
+
+                <div className="card-photo-wrapper">
+                  <img
+                    src={
+                      worker.photo
+                        ? `http://localhost:5000${worker.photo}`
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=fdb441&color=1a1a1a&bold=true&size=300`
+                    }
+                    alt={worker.name}
+                    className="card-photo"
+                    onError={(e) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=fdb441&color=1a1a1a&bold=true&size=300`;
+                    }}
+                  />
+                  <div className="rating-badge">
+                    ⭐ {worker.rating || '4.5'}
+                  </div>
                 </div>
 
-                <div className="worker-action">
-                  <button className="book-btn-small" onClick={() => handleBookClick(worker)}>
+                <div className="card-info">
+                  <h3 className="worker-name">{worker.name}</h3>
+                  <p className="worker-profession">🔧 {worker.profession || 'General Worker'}</p>
+                  {worker.location && (
+                    <p className="worker-location">📍 {worker.location}</p>
+                  )}
+                  <p className="worker-jobs">
+                    ✅ {worker.jobsCompleted || 0} Jobs Completed
+                  </p>
+                  <button className="book-btn" onClick={() => handleBookClick(worker)}>
                     Book Now
                   </button>
                 </div>
+
               </div>
             ))}
           </div>
@@ -86,12 +107,11 @@ const Dashboard = () => {
       </div>
 
       {selectedWorker && (
-        <BookingModel 
-          worker={selectedWorker} 
-          onClose={() => setSelectedWorker(null)} 
+        <BookingModel
+          worker={selectedWorker}
+          onClose={() => setSelectedWorker(null)}
         />
       )}
-      
     </div>
   );
 };

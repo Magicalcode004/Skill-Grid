@@ -43,7 +43,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
-  border-left: 6px solid #ccc; /* Default Pending */
+  border-left: 6px solid #ccc; 
 }
 
 /* Status Colors */

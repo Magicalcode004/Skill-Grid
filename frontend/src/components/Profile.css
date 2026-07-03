@@ -1,0 +1,135 @@
+.worker-profile-page {
+  min-height: 100vh;
+  background: #fff7f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.worker-profile-container {
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(255, 140, 0, 0.15);
+}
+
+.worker-profile-header {
+  background: linear-gradient(135deg, #ff8c00, #ff6b00);
+  color: white;
+  text-align: center;
+  padding: 35px;
+}
+
+.worker-profile-header h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.worker-profile-header p {
+  margin-top: 8px;
+  opacity: 0.9;
+  letter-spacing: 1px;
+}
+
+.worker-profile-details {
+  padding: 30px;
+}
+
+.worker-profile-image {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.worker-profile-image img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #ff8c00;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.worker-profile-card {
+  background: #fff8f1;
+  border-left: 5px solid #ff8c00;
+  border-radius: 15px;
+  padding: 16px 20px;
+  margin-bottom: 15px;
+}
+
+.worker-profile-card strong {
+  display: block;
+  color: #ff6b00;
+  margin-bottom: 5px;
+}
+
+.worker-profile-card span {
+  color: #444;
+}
+
+.worker-profile-form {
+  padding: 30px;
+}
+
+.worker-profile-input-group {
+  margin-bottom: 20px;
+}
+
+.worker-profile-input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.worker-profile-input-group input {
+  width: 100%;
+  padding: 13px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.worker-profile-input-group input:focus {
+  border-color: #ff8c00;
+}
+
+.worker-profile-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff8c00, #ff6b00);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.worker-profile-button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.worker-profile-button-group button {
+  flex: 1;
+}
+
+.worker-profile-cancel-btn {
+  border: none;
+  border-radius: 12px;
+  background: #e0e0e0;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .worker-profile-button-group {
+    flex-direction: column;
+  }
+}
