@@ -90,3 +90,86 @@
   color: #777;
   font-size: 1.2rem;
 }
+.admin-stats {
+  display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+}
+.stat-card {
+  background: #1a1a2e; color: #fff;
+  padding: 20px 30px; border-radius: 12px;
+  text-align: center; flex: 1; min-width: 120px;
+}
+.stat-card h3 { font-size: 2rem; color: #fdb441; margin: 0; }
+.stat-card p  { font-size: 0.9rem; margin: 4px 0 0; }
+
+.admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.tab-btn {
+  padding: 8px 22px; border-radius: 30px;
+  border: 2px solid #1a1a2e; background: #fff;
+  color: #1a1a2e; font-weight: 700; cursor: pointer;
+}
+.tab-btn.active { background: #1a1a2e; color: #fdb441; }
+
+.admin-user-photo {
+  width: 40px; height: 40px;
+  border-radius: 50%; object-fit: cover;
+  border: 2px solid #fdb441;
+}
+/* MESSAGES */
+.messages-section { margin-top: 10px; }
+
+.messages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.msg-card {
+  background: #fff; border-radius: 14px;
+  padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  border-left: 5px solid #e0e0e0;
+  transition: transform 0.2s;
+}
+.msg-card:hover { transform: translateY(-3px); }
+.msg-card.unread { border-left-color: #e53e3e; background: #fff9f9; }
+.msg-card.read   { border-left-color: #2d6a4f; }
+
+.msg-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 12px;
+}
+.msg-header h4 { font-size: 1rem; color: #1a1a2e; margin: 0 0 4px; }
+.msg-email     { font-size: 0.82rem; color: #666; margin: 0; }
+
+.msg-meta {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 4px;
+}
+.msg-meta small { font-size: 0.78rem; color: #999; }
+
+.msg-badge {
+  font-size: 0.75rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+}
+.msg-badge.unread { background: #ffe5e5; color: #e53e3e; }
+.msg-badge.read   { background: #e5f5ec; color: #2d6a4f; }
+
+.msg-body {
+  font-size: 0.92rem; color: #444;
+  line-height: 1.5; margin-bottom: 14px;
+  padding: 10px; background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.msg-actions { display: flex; gap: 8px; }
+.msg-btn {
+  padding: 7px 14px; border: none; border-radius: 8px;
+  font-weight: 700; font-size: 0.82rem; cursor: pointer;
+}
+.read-btn   { background: #e5f5ec; color: #2d6a4f; }
+.delete-btn { background: #ffe5e5; color: #e53e3e; }
+.msg-btn:hover { opacity: 0.85; }
+
+.no-msg {
+  text-align: center; padding: 50px;
+  color: #888; font-size: 1rem;
+}

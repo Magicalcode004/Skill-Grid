@@ -1,0 +1,99 @@
+.contact-page { min-height: 100vh; background: #f5f5f5; padding-bottom: 60px; }
+
+.contact-header {
+  text-align: center; padding: 50px 20px 30px;
+  background: #1a1a2e; color: #fff;
+}
+.contact-header h1 { font-size: 2.2rem; font-weight: 800; margin: 0 0 8px; }
+.contact-header h1 span { color: #fdb441; }
+.contact-header p { color: #aaa; }
+
+.contact-body {
+  max-width: 900px; margin: 40px auto;
+  display: flex; gap: 30px; padding: 0 20px; flex-wrap: wrap;
+}
+
+.contact-info {
+  flex: 1; min-width: 220px;
+  background: #fff; padding: 30px; border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+.contact-info h3 { color: #1a1a2e; margin-bottom: 16px; font-size: 1.2rem; }
+.contact-info p { margin: 10px 0; color: #555; font-size: 0.95rem; }
+
+.contact-form-box {
+  flex: 2; min-width: 280px;
+  background: #fff; padding: 30px; border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.contact-form-box .input-group { margin-bottom: 14px; }
+.contact-form-box label { display: block; font-size: 0.88rem; font-weight: 600; color: #555; margin-bottom: 5px; }
+.contact-form-box input,
+.contact-form-box textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 0.95rem; outline: none; resize: vertical;
+  transition: border 0.2s;
+}
+.contact-form-box input:focus,
+.contact-form-box textarea:focus { border-color: #fdb441; }
+
+.contact-submit-btn {
+  width: 100%; padding: 13px;
+  background: #fdb441; color: #1a1a1a;
+  border: none; border-radius: 10px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: background 0.2s;
+}
+.contact-submit-btn:hover { background: #f0a820; }
+
+.success-msg { text-align: center; padding: 40px 20px; }
+.success-msg h3 { color: #1a1a2e; font-size: 1.4rem; }
+.success-msg button {
+  margin-top: 16px; padding: 10px 24px;
+  background: #1a1a2e; color: #fdb441;
+  border: none; border-radius: 8px;
+  font-weight: 700; cursor: pointer;
+}
+.login-prompt {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fff9f0;
+  border: 2px solid #fdb441;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.login-prompt p {
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.login-prompt-btn {
+  padding: 9px 22px;
+  background: #fdb441;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.login-prompt-btn:hover { background: #f0a820; }
+
+.not-logged-in-msg {
+  text-align: center;
+  color: #e53e3e;
+  font-size: 0.88rem;
+  margin-top: 10px;
+}
+
+.login-link {
+  color: #1a1a2e;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}

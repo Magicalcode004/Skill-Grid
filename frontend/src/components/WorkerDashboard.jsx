@@ -1,133 +1,232 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './WorkerDashboard.css';
+import LiveChat from './LiveChat';
 
 const WorkerDashboard = () => {
   const [requests, setRequests] = useState([]);
+  const [user, setUser]         = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [tab, setTab]           = useState('all');
+  const [activeChat,setActiveChat]= useState(null);
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString): null;
 
-  
-  useEffect(() => {
-    const fetchMyRequests = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+  const token = localStorage.getItem('token');
 
-        
-        const response = await fetch("http://localhost:5000/api/requests/myrequest", {
-          method: "GET",
-          headers: {
-            "auth-token": token 
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setRequests(data); 
-        } else {
-          console.error("Failed to fetch requests");
-        }
-      } catch (error) {
-        console.error("Fetch requests error:", error);
-      }
-    };
-
-    fetchMyRequests();
-  }, []);
-
-  
-  const handleAction = async (id, actionStatus) => {
+  const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:5000/api/requests/updatestatus/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token
-        },
-        // Backend RequestSchema enum ('pending', 'accepted', 'rejected') ke hisaab se bhejenge
-        body: JSON.stringify({ status: actionStatus }) 
-      });
-
-      if (response.ok) {
-        // UI update
-        setRequests(requests.map(req => 
-          req._id === id ? { ...req, status: actionStatus } : req
-        ));
-      } else {
-        alert(" Status update failed!");
-      }
-    } catch (error) {
-      console.error("Update Status Error:", error);
+      const [profileRes, requestsRes] = await Promise.all([
+        fetch('http://localhost:5000/api/auth/profile',         { headers: { 'auth-token': token } }),
+        fetch('http://localhost:5000/api/requests/myrequest',   { headers: { 'auth-token': token } }),
+      ]);
+      const requestsData = await requestsRes.json();
+setRequests(Array.isArray(requestsData) ? requestsData : []);
+      setUser(await profileRes.json());
+      setRequests(await requestsRes.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => { fetchData(); }, []);
+
+  const handleAction = async (id, status) => {
+    const res = await fetch(`http://localhost:5000/api/requests/updatestatus/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'auth-token': token },
+      body: JSON.stringify({ status })
+    });
+    if (res.ok) {
+      setRequests(requests.map(r => r._id === id ? { ...r, status } : r));
+    } else alert(' Update failed!');
+  };
+
+  const handleGenerateOtp = async (id) => {
+    const res = await fetch(`http://localhost:5000/api/requests/generate-otp/${id}`, {
+      method: 'POST',
+      headers: { 'auth-token': token }
+    });
+    const data = await res.json();
+    if (res.ok) alert(` OTP for client: ${data.otp}\n\nUpdate this OTP to client if work is done.`);
+    else alert(' ' + data.message);
+  };
+
+  if (loading) return <div className="wd-loading">Loading your dashboard...</div>;
+
+  const stats = {
+    total:     requests.length,
+    pending:   requests.filter(r => r.status === 'pending').length,
+    accepted:  requests.filter(r => r.status === 'accepted').length,
+    completed: requests.filter(r => r.status === 'completed').length,
+    rejected:  requests.filter(r => r.status === 'rejected').length,
+  };
+
+  const totalEarnings = requests
+    .filter(r => r.status === 'completed')
+    .length * (user?.chargeAmount || 0);
+
+  const filtered = tab === 'all' ? requests : requests.filter(r => r.status === tab);
+
+  const statusColor = { pending:'#f0a820', accepted:'#2d6a4f', completed:'#1a1a2e', rejected:'#e53e3e' };
+
   return (
-    <div className="worker-dash-page">
-      <div className="worker-dash-header">
-        
-        <h1>Welcome Back</h1>
-        <p>Manage your job requests and grow your business.</p>
-        
-      </div>
+    <div className="wd-page">
 
-      <div className="worker-dash-container">
-        <h2>New Job Requests</h2>
-
-        <div className="requests-container">
-          {requests.map((request) => {
-            
-            
-            const safeStatus = request.status ? request.status.toLowerCase() : 'pending';
-
-            return (
-              <div className={`request-card ${safeStatus === 'rejected' ? 'declined' : safeStatus}`} key={request._id}>
-                
-                <div className="request-info">
-                
-                  <h3>{request.client ? request.client.name : "Unknown Client"}</h3>
-                  <p className="req-location">📍 {request.address}</p>
-                  <p className="req-date">📅 {request.date}</p>
-                  
-                  <div className="req-problem">
-                    <strong>Issue:</strong> {request.serviceNeeded}
-                  </div>
-                  
-                  
-                  {safeStatus === 'accepted' && request.client?.phone && (
-                     <p style={{marginTop: '10px', color: '#1e7e34', fontWeight: 'bold'}}>
-                       📞 Client Phone: {request.client.phone}
-                     </p>
-                  )}
-                </div>
-
-                <div className="request-actions">
-                  {safeStatus === "pending" ? (
-                    <>
-                      <button className="btn-accept" onClick={() => handleAction(request._id, "accepted")}>
-                        ✅ Accept
-                      </button>
-                      <button className="btn-decline" onClick={() => handleAction(request._id, "rejected")}>
-                        ❌ Decline
-                      </button>
-                    </>
-                  ) : (
-                    <div className={`status-badge ${safeStatus === 'rejected' ? 'declined' : safeStatus}`}>
-                      {request.status.toUpperCase()}
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            );
-          })}
-
-          {requests.length === 0 && (
-            <p className="no-requests">No, any new booking till now. Please wait!</p>
-          )}
+      {/* HEADER */}
+      <div className="wd-header">
+        <div className="wd-header-left">
+          <img
+            src={user?.photo
+              ? `http://localhost:5000${user.photo}`
+              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name||'W')}&background=fdb441&color=1a1a1a&bold=true&size=200`}
+            alt="profile"
+            className="wd-avatar"
+            onError={(e) => {
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name||'W')}&background=fdb441&color=1a1a1a&bold=true&size=200`;
+            }}
+          />
+          <div>
+            <h2>{user?.name} 👷</h2>
+            <p>🔧 {user?.profession || 'Worker'} &nbsp;|&nbsp; 📍 {user?.location || '—'}</p>
+            <p>⭐ {user?.rating || 4.5} Rating &nbsp;|&nbsp; ✅ {user?.jobsCompleted || 0} Jobs Done</p>
+            {user?.chargeAmount > 0 && (
+              <p>💰 ₹{user.chargeAmount}/{user.chargeType === 'hour' ? 'hr' : 'day'}</p>
+            )}
+          </div>
+        </div>
+        <div className="wd-header-actions">
+          <Link to="/profile" className="wd-action-btn secondary">✏️ Edit Profile</Link>
         </div>
       </div>
+
+      {/* STATS */}
+      <div className="wd-stats">
+        <div className="wd-stat-card total">
+          <h3>{stats.total}</h3><p>Total Requests</p>
+        </div>
+        <div className="wd-stat-card pending">
+          <h3>{stats.pending}</h3><p>⏳ Pending</p>
+        </div>
+        <div className="wd-stat-card accepted">
+          <h3>{stats.accepted}</h3><p>🔨 Active Jobs</p>
+        </div>
+        <div className="wd-stat-card completed">
+          <h3>{stats.completed}</h3><p>🎉 Completed</p>
+        </div>
+        {user?.chargeAmount > 0 && (
+          <div className="wd-stat-card earnings">
+            <h3>₹{totalEarnings}</h3>
+            <p>💰 Est. Earnings</p>
+          </div>
+        )}
+      </div>
+
+      {/* REQUESTS TABLE */}
+      <div className="wd-body">
+        <div className="wd-section-header">
+          <h2>Job Requests</h2>
+          <div className="wd-tabs">
+            {['all','pending','accepted','completed','rejected'].map(t => (
+              <button key={t} className={`wd-tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="wd-empty">
+            <p>No requests.</p>
+          </div>
+        ) : (
+          <table className="wd-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(req => {
+                const st = req.status || 'pending';
+                return (
+                  <tr key={req._id}>
+                    <td>
+                      <div className="wd-client-cell">
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(req.client?.name||'C')}&background=1a1a2e&color=fdb441&bold=true`}
+                          alt="c" className="wd-table-avatar"
+                        />
+                        <div>
+                          <strong>{req.client?.name || '—'}</strong>
+                          {st === 'accepted' && req.client?.phone && (
+                            <small className="wd-client-phone">📞 {req.client.phone}</small>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td>{req.serviceNeeded}</td>
+                    <td>{req.date}</td>
+                    <td>{req.address}</td>
+                    <td>
+                      <span className="wd-status-badge" style={{ background: statusColor[st] }}>
+                        {st.toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="wd-actions-cell">
+                        {st === 'pending' && (
+                          <>
+                            <button className="wd-btn accept" onClick={() => handleAction(req._id, 'accepted')}>
+                              ✅ Accept
+                            </button>
+                            <button className="wd-btn decline" onClick={() => handleAction(req._id, 'rejected')}>
+                              ❌ Decline
+                            </button>
+                          </>
+                        )}
+                        {st === 'accepted' && (
+                          <>
+                          <button className="wd-btn otp" onClick={() => handleGenerateOtp(req._id)}>
+                            🔐 Gen OTP
+                          </button>
+
+                          <button className='wd-btn chat'
+                          onClick={()=> setActiveChat({
+                            requestId : req._id,
+                            otherUser : req.client
+                          })}>Chat</button>
+                          </>
+                        )}
+                        {st === 'completed' && <span className="wd-done">✔ Done</span>}
+                        {st === 'rejected'  && <span className="wd-rej">—</span>}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {activeChat && currentUser && (
+        <LiveChat
+        requestId={activeChat.requestId}
+        currentUser={currentUser}
+        otherUser={activeChat.otherUser}
+        onClose={()=> setActiveChat(null)}
+        />
+      )}
     </div>
-        );
+  );
 };
 
 export default WorkerDashboard;

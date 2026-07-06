@@ -42,7 +42,7 @@ const Footer = () => {
           <h3>Contact Info</h3>
           <p>📍 Hazaribagh, Jharkhand, India</p>
           <p>📞 +91-8809058320</p>
-          <p>✉️ support@skillgrid.com</p>
+          <p>✉️ support.skillgrid@gmail.com</p>
         </div>
 
       </div>

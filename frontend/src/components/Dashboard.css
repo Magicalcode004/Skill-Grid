@@ -152,3 +152,10 @@
     background: #f0a820;
     transform: scale(1.02);
 }
+
+.worker-charge {
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  font-weight: 700;
+  margin: 5px 0;
+}

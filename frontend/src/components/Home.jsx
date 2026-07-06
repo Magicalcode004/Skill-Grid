@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 import FeaturedWorkers from '../components/FeatureWorker';
+import About from '../components/About';
+import ContactUs from './ContactUs';
 
 
 const Home = () => {
@@ -22,7 +24,7 @@ const Home = () => {
               SkillGrid connects you with verified daily-wage workers, electricians, and plumbers right in your neighborhood. Quality work, guaranteed.
             </p>
             <div className="hero-buttons">
-              <Link to="/dashboard" className="btn-primary">Book a Service</Link>
+              <Link to="/browse-workers" className="btn-primary">Book a Service</Link>
               <Link to="/register" className="btn-secondary">Join as Worker</Link>
             </div>
           </div>
@@ -92,7 +94,10 @@ const Home = () => {
         </div>
       </section>
       <FeaturedWorkers/>
-
+      <>
+      <About/>
+      <ContactUs/>
+      </>
     </div>
   );
 };

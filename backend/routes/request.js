@@ -87,4 +87,51 @@ router.get('/mybookings',checkauth,async (req,res)=>
     }
 });
 
+// Worker generates OTP when work is done
+router.post('/generate-otp/:id', checkauth, async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id);
+        if (!request) return res.status(404).json({ message: 'Request not found' });
+        if (request.worker.toString() !== req.user.id)
+            return res.status(403).json({ message: 'Not allowed' });
+
+        // 4 digit OTP generate
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        request.completionOtp = otp;
+        await request.save();
+
+        res.json({ message: 'OTP generated', otp });
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
+// Client enters OTP to mark work as completed
+router.post('/verify-otp/:id', checkauth, async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const request = await Request.findById(req.params.id);
+        if (!request) return res.status(404).json({ message: 'Request not found' });
+        if (request.client.toString() !== req.user.id)
+            return res.status(403).json({ message: 'Not allowed' });
+
+        if (request.completionOtp !== otp)
+            return res.status(400).json({ message: 'Invalid OTP' });
+
+        request.status = 'completed';
+        request.isCompleted = true;
+        request.completionOtp = null;
+        await request.save();
+
+        // Jobs completed count update
+        await require('../UserSchema').findByIdAndUpdate(
+            request.worker, { $inc: { jobsCompleted: 1 } }
+        );
+
+        res.json({ message: 'Work marked as completed!' });
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports=router;

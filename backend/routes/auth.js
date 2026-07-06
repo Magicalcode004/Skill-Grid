@@ -67,41 +67,86 @@ router.post('/login', async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
-//user profile
-router.get('/profile',checkauth,async (req,res)=>
-{
-    try{
+
+// USER PROFILE
+router.get('/profile', checkauth, async (req, res) => {
+    try {
         const user = await User.findById(req.user.id).select('-password');
-        if(!user) return res.status(404).json({message:"User not found"});
+        if (!user) return res.status(404).json({ message: "User not found" });
         res.json(user);
-    }catch(error){
+    } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error");
-
     }
 });
 
-//update profile
+// UPDATE PROFILE
+router.put('/profile', checkauth, async (req, res) => {
+    try {
+        // Sirf wahi cheezein destructure ki hain jo update karni hain
+        const { name, phone, profession, experience, location, chargeType, chargeAmount } = req.body;
 
-router.put('/profile',checkauth,async(req,res)=>
-{
-    try{
-        const{name, phone, profession, location, experience}= req.body;
         let user = await User.findById(req.user.id);
-        if(!user) return res.status(404).json({message: "User Not found"});
+        if (!user) return res.status(404).json({ message: "User Not found" });
 
-        if(name) user.name=name;
-        if(phone) user.phone =phone;
-        if(user.role === 'worker'){
-            if(profession) user.profession = profession;
-            if(location) user.location = location;
-            if(experience) user.experience = experience;
+        // Basic Info Update
+        if (name) user.name = name;
+        if (phone) user.phone = phone;
+
+        // Worker Specific Info Update
+        if (user.role === 'worker') {
+            if (profession) user.profession = profession;
+            if (location) user.location = location;
+            if (experience) user.experience = experience;
+            if (chargeType) user.chargeType = chargeType;
+            if (chargeAmount) user.chargeAmount = chargeAmount;
         }
+
         await user.save();
-        res.json({message:"Profile updated successfully!",user});
-    }catch(error){
+        res.json({ message: "Profile updated successfully!", user });
+    } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error");
+    }
+});
+
+
+
+// GET profile
+router.get('/profile', checkauth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
+// PUT update profile
+router.put('/profile', checkauth, async (req, res) => {
+    try {
+        const { name, phone, profession, experience, location } = req.body;
+        const updated = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: { name, phone, profession, experience, location } },
+            { new: true }
+        ).select('-password');
+        res.json({ message: 'Profile updated successfully', user: updated });
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+// Check email exists or not — OTP step se pehle
+router.post('/check-email', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const existing = await User.findOne({ email });
+        if (existing) {
+            return res.status(400).json({ message: 'This email is already registered. Please login.' });
+        }
+        res.status(200).json({ message: 'Email available.' });
+    } catch (err) {
+        res.status(500).send('Server Error');
     }
 });
 

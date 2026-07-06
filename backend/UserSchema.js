@@ -14,7 +14,9 @@ const UserSchema = new mongoose.Schema({
     photo:        { type: String, default: '' },
     location:     { type: String, default: '' },
     rating:       { type: Number, default: 4.5 },
-    jobsCompleted:{ type: Number, default: 0 }
+    jobsCompleted:{ type: Number, default: 0 },
+    chargeType:   { type: String, enum: ['hour', 'day'], default: 'day' },
+chargeAmount: { type: Number, default: 0 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);

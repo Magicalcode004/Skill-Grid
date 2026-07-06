@@ -33,14 +33,14 @@ const Navbar = () => {
         <div className="nav-links">
           <Link to="/" className="nav-item">Home</Link>
           <Link to="/about" className="nav-item">About</Link>
+          <Link to="/contact" className="nav-item">Contact Us</Link>
 
-          {/* Conditional rendering for logged in/out users */}
           {token && user ? (
             <>
               {user.role === 'client' && (
                 <>
-                  <Link to="/dashboard" className="nav-item">Dashboard</Link>
-                  <Link to="/my-bookings" className="nav-item">My Bookings</Link>
+                  <Link to="/browse-workers" className="nav-item">Browse Workers</Link>
+                  <Link to="/dashboard" className="nav-item">My Dashboard</Link>
                 </>
               )}
 
@@ -62,9 +62,8 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/dashboard" className="nav-item">Dashboard</Link>
+              <Link to="/browse-workers" className="nav-item">Browse Workers</Link>
               <Link to="/login" className="nav-item">Login</Link>
-              {/* Note: Typo fixed here (/register) */}
               <Link to="/ragister" className="nav-item nav-btn register-btn">Register</Link>
             </>
           )}
