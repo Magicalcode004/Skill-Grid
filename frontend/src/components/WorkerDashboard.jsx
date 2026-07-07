@@ -14,7 +14,7 @@ const WorkerDashboard = () => {
   const currentUser = userString ? JSON.parse(userString): null;
 
   const token = sessionStorage.getItem('token');
-  const {showToast} = useToast;
+  const {showToast} = useToast();
 
 
 const fetchData = async () => {
@@ -170,9 +170,15 @@ const handleAction = async (id, status) => {
                     <td>
                       <div className="wd-client-cell">
                         <img
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(req.client?.name||'C')}&background=1a1a2e&color=fdb441&bold=true`}
-                          alt="c" className="wd-table-avatar"
-                        />
+  src={req.client?.photo
+    ? `http://localhost:5000${req.client.photo}`
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(req.client?.name||'C')}&background=1a1a2e&color=fdb441&bold=true`}
+  alt="c"
+  className="wd-table-avatar"
+  onError={(e) => {
+    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(req.client?.name||'C')}&background=1a1a2e&color=fdb441&bold=true`;
+  }}
+/>
                         <div>
                           <strong>{req.client?.name || '—'}</strong>
                           {st === 'accepted' && req.client?.phone && (

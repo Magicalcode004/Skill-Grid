@@ -29,7 +29,7 @@ router.get('/myrequest', checkauth, async(req,res)=>{
 
     try{
         const requests=await Request.find({worker:req.user.id})
-        .populate('client','name phone email');
+        .populate('client','name phone email photo');
 
         res.json(requests);
 
@@ -71,7 +71,7 @@ router.get('/mybookings',checkauth,async (req,res)=>
 {
     try{
         const booking = await Request.find({client:req.user.id})
-        .populate('worker','name phone email');
+        .populate('worker','name phone email photo');
 
         res.json(booking);
 

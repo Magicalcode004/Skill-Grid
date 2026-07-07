@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../UserSchema');
 const upload = require('../middleware/upload');
 const checkauth = require('../middleware/checkauth');
+const {sendOtpEmail} = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -14,16 +15,24 @@ const otpStore = new Map();
 // STEP 1: OTP generate karo (backend se)
 router.post('/send-otp', async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, name } = req.body;
         if (!email) return res.status(400).json({ message: 'Email is required' });
 
         const existing = await User.findOne({ email });
         if (existing) return res.status(400).json({ message: 'This email is already registered. Please login.' });
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 }); // 10 min valid
+        otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
 
-        res.status(200).json({ message: 'OTP generated', otp }); // frontend isko EmailJS se bhejega
+        try {
+            await sendOtpEmail(email, name, otp);
+        } catch (mailErr) {
+            console.error('Email send error:', mailErr.message);
+            otpStore.delete(email);
+            return res.status(500).json({ message: 'Failed to send OTP email. Please try again.' });
+        }
+
+        res.status(200).json({ message: 'OTP sent to your email' });
     } catch (err) {
         res.status(500).send('Server Error');
     }

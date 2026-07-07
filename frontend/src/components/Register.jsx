@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
+
 import './Auth.css';
 import {useToast} from '../context/ToastContext';
 
-// ─── EmailJS Config —  ───────────────────
-const EMAILJS_SERVICE_ID  = 'service_9efh2kk';
-const EMAILJS_TEMPLATE_ID = 'template_et33ugu';
-const EMAILJS_PUBLIC_KEY  = '3Tg4uLarICy5ScGkD';
+
 
 // ─── Steps ────────────────────────────────────────────────
 const STEP_BASIC   = 1; // Name, Email, Phone
@@ -62,31 +59,24 @@ const handleSendOtp = async (e) => {
     setLoading(true);
     try {
         const res = await fetch('http://localhost:5000/api/auth/send-otp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: formData.email }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            showToast(data.message);
-            setLoading(false);
-            return;
-        }
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: formData.email, name: formData.name }),
+});
+const data = await res.json();
+if (!res.ok) {
+    showToast(data.message);
+    setLoading(false);
+    return;
+}
 
-        await emailjs.send(
-            EMAILJS_SERVICE_ID,
-            EMAILJS_TEMPLATE_ID,
-            { to_email: formData.email, to_name: formData.name, otp: data.otp },
-            EMAILJS_PUBLIC_KEY
-        );
-
-        showToast(`OTP sent to ${formData.email}. Please check your inbox.`);
-        setStep(STEP_OTP);
+showToast(`OTP sent to ${formData.email}. Please check your inbox.`);
+setStep(STEP_OTP);
 
     } catch (err) {
-        console.error('OTP send error:', err);
-        showToast('Failed to send OTP. Check EmailJS config.');
-    } finally {
+    console.error('OTP send error:', err);
+    showToast('Failed to send OTP. Please try again.');
+}finally {
         setLoading(false);
     }
 };
@@ -122,23 +112,15 @@ const handleSendOtp = async (e) => {
     setLoading(true);
     try {
         const res = await fetch('http://localhost:5000/api/auth/send-otp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: formData.email }),
-        });
-        const data = await res.json();
-        if (!res.ok) { showToast(data.message); return; }
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: formData.email, name: formData.name }),
+});
+const data = await res.json();
+if (!res.ok) { showToast(data.message); return; }
 
-        setOtpInput('');
-
-        await emailjs.send(
-            EMAILJS_SERVICE_ID,
-            EMAILJS_TEMPLATE_ID,
-            { to_email: formData.email, to_name: formData.name, otp: data.otp },
-            EMAILJS_PUBLIC_KEY
-        );
-
-        showToast('New OTP sent to your email.');
+setOtpInput('');
+showToast('New OTP sent to your email.');
     } catch (err) {
         showToast('Failed to resend OTP.');
     } finally {
