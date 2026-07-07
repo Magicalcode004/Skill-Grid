@@ -7,13 +7,69 @@ const checkauth = require('../middleware/checkauth');
 
 const router = express.Router();
 
+
+
+const otpStore = new Map();
+
+// STEP 1: OTP generate karo (backend se)
+router.post('/send-otp', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: 'Email is required' });
+
+        const existing = await User.findOne({ email });
+        if (existing) return res.status(400).json({ message: 'This email is already registered. Please login.' });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 }); // 10 min valid
+
+        res.status(200).json({ message: 'OTP generated', otp }); // frontend isko EmailJS se bhejega
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
+// STEP 2: OTP verify karo (backend se)
+router.post('/verify-otp', (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const record = otpStore.get(email);
+
+        if (!record) return res.status(400).json({ message: 'OTP expired or not requested. Please resend OTP.' });
+        if (Date.now() > record.expiresAt) {
+            otpStore.delete(email);
+            return res.status(400).json({ message: 'OTP expired. Please resend OTP.' });
+        }
+        if (record.otp !== otp) return res.status(400).json({ message: 'Incorrect OTP.' });
+
+        otpStore.delete(email);
+
+        const regToken = jwt.sign({ email, purpose: 'register' }, process.env.JWT_SECRET, { expiresIn: '10m' });
+        res.status(200).json({ message: 'OTP verified', regToken });
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
 // REGISTER 
 router.post('/register', upload.single('photo'), async (req, res) => {
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-
     try {
-        const { name, email, password, phone, role, profession, experience, location } = req.body;
+        const { name, email, password, phone, role, profession, experience, location, regToken } = req.body;
+
+        // Security: OTP verify kiye bina register na ho
+        if (!regToken) return res.status(403).json({ message: 'Email verification required. Please verify OTP first.' });
+
+        let decoded;
+        try {
+            decoded = jwt.verify(regToken, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(403).json({ message: 'Verification expired. Please verify OTP again.' });
+        }
+        if (decoded.purpose !== 'register' || decoded.email !== email) {
+            return res.status(403).json({ message: 'Email verification mismatch. Please verify OTP again.' });
+        }
+
+        const safeRole = (role === 'worker') ? 'worker' : 'client';
 
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: "User already exists with this email" });
@@ -26,10 +82,10 @@ router.post('/register', upload.single('photo'), async (req, res) => {
             email,
             password: hashedPassword,
             phone,
-            role,
-            profession: role === 'worker' ? profession : undefined,
-            experience: role === 'worker' ? experience : undefined,
-            location: role === 'worker' ? location : undefined,
+            role: safeRole,
+            profession: safeRole === 'worker' ? profession : undefined,
+            experience: safeRole === 'worker' ? experience : undefined,
+            location: safeRole === 'worker' ? location : undefined,
             photo: req.file ? `/uploads/${req.file.filename}` : ''
         });
 
@@ -81,25 +137,27 @@ router.get('/profile', checkauth, async (req, res) => {
 });
 
 // UPDATE PROFILE
-router.put('/profile', checkauth, async (req, res) => {
+router.put('/profile', checkauth, upload.single('photo'), async (req, res) => {
     try {
-        // Sirf wahi cheezein destructure ki hain jo update karni hain
         const { name, phone, profession, experience, location, chargeType, chargeAmount } = req.body;
 
         let user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: "User Not found" });
 
-        // Basic Info Update
         if (name) user.name = name;
         if (phone) user.phone = phone;
 
-        // Worker Specific Info Update
         if (user.role === 'worker') {
             if (profession) user.profession = profession;
             if (location) user.location = location;
             if (experience) user.experience = experience;
             if (chargeType) user.chargeType = chargeType;
             if (chargeAmount) user.chargeAmount = chargeAmount;
+        }
+
+        // Naya photo upload hua ho toh update karo
+        if (req.file) {
+            user.photo = `/uploads/${req.file.filename}`;
         }
 
         await user.save();
@@ -112,30 +170,9 @@ router.put('/profile', checkauth, async (req, res) => {
 
 
 
-// GET profile
-router.get('/profile', checkauth, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password');
-        res.json(user);
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
 
-// PUT update profile
-router.put('/profile', checkauth, async (req, res) => {
-    try {
-        const { name, phone, profession, experience, location } = req.body;
-        const updated = await User.findByIdAndUpdate(
-            req.user.id,
-            { $set: { name, phone, profession, experience, location } },
-            { new: true }
-        ).select('-password');
-        res.json({ message: 'Profile updated successfully', user: updated });
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-});
+
+
 // Check email exists or not — OTP step se pehle
 router.post('/check-email', async (req, res) => {
     try {

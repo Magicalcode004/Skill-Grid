@@ -6,19 +6,22 @@ import './Navbar.css';
 const Navbar = () => {
   const navigate = useNavigate();
   
-  const token = localStorage.getItem('token');
-  const userString = localStorage.getItem('user');
+  const token = sessionStorage.getItem('token');
+  const userString = sessionStorage.getItem('user');
   
   let user = null;
   if (userString && userString !== "undefined") {
     user = JSON.parse(userString);
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login'); 
-  };
+  // Naya
+const handleLogout = () => {
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('user');
+  navigate('/login');
+};
 
   return (
     <nav className="navbar">
@@ -64,7 +67,7 @@ const Navbar = () => {
             <>
               <Link to="/browse-workers" className="nav-item">Browse Workers</Link>
               <Link to="/login" className="nav-item">Login</Link>
-              <Link to="/ragister" className="nav-item nav-btn register-btn">Register</Link>
+              <Link to="/register" className="nav-item nav-btn register-btn">Create Profile</Link>
             </>
           )}
         </div>

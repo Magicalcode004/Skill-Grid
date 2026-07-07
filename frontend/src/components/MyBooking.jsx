@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './MyBooking.css';
+import { useToast } from '../context/ToastContext';
 
 const statusConfig = {
   pending:   { label: 'Pending',   color: '#f0a820', icon: '⏳' },
@@ -12,10 +13,11 @@ const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [otpInputs, setOtpInputs] = useState({});
+  const { showToast } = useToast();
 
   const fetchMyBookings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) return;
       const res = await fetch("http://localhost:5000/api/requests/mybookings", {
         headers: { "auth-token": token }
@@ -28,20 +30,21 @@ const MyBookings = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchMyBookings(); }, []);
 
   const handleVerifyOtp = async (bookingId) => {
     const otp = otpInputs[bookingId];
-    if (!otp) return alert('Enter OTP first!');
-    const token = localStorage.getItem('token');
+    if (!otp) return showToast('Enter OTP first!', 'error');
+    const token = sessionStorage.getItem('token');
     const res = await fetch(`http://localhost:5000/api/requests/verify-otp/${bookingId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'auth-token': token },
       body: JSON.stringify({ otp })
     });
     const data = await res.json();
-    if (res.ok) { alert(' ' + data.message); fetchMyBookings(); }
-    else alert(' ' + data.message);
+    if (res.ok) { showToast(data.message, 'success'); fetchMyBookings(); }
+    else showToast(data.message, 'error');
   };
 
   if (loading) return <div className="loading-screen"><h2>Loading your bookings...</h2></div>;

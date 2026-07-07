@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './BookingModel.css';
+import { useToast } from '../context/ToastContext';
 
 const BookingModel = ({ worker, onClose }) => {
   const [bookingData, setBookingData] = useState({ date: '', address: '', serviceNeeded: '' });
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     setBookingData({ ...bookingData, [e.target.name]: e.target.value });
@@ -10,8 +12,8 @@ const BookingModel = ({ worker, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-    if (!token) return alert("Login First...!");
+    const token = sessionStorage.getItem('token');
+    if (!token) return showToast("Login First...!", 'error');
 
     const response = await fetch("http://localhost:5000/api/requests/book", {
       method: "POST",
@@ -20,8 +22,8 @@ const BookingModel = ({ worker, onClose }) => {
     });
 
     const data = await response.json();
-    if (response.ok) { alert(" " + data.message); onClose(); }
-    else alert(" " + (data.message || "Something went wrong"));
+    if (response.ok) { showToast(data.message, 'success'); onClose(); }
+    else showToast(data.message || "Something went wrong", 'error');
   };
 
   return (

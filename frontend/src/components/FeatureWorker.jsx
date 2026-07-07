@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FeaturedWorkers.css';
+import { useToast } from '../context/ToastContext';
 
 const FeaturedWorkers = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   // Dummy Data for Home Page
   const dummyWorkers = [
@@ -37,10 +39,10 @@ const FeaturedWorkers = () => {
   ];
 
   const handleDummyBook = () => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     
     if (!token) {
-      alert("Log in first");
+      showToast("Log in first", 'error');
       
     } else {
       navigate('/dashboard');

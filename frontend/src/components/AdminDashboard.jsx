@@ -1,37 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
+import { useToast } from '../context/ToastContext';
 
 const AdminDashboard = () => {
   const [users, setUsers]       = useState([]);
   const [messages, setMessages] = useState([]);
   const [tab, setTab]           = useState('all');
+  const { showToast } = useToast();
 
   const fetchUsers = async () => {
-    const res = await fetch("http://localhost:5000/api/admin/users");
+    const res = await fetch("http://localhost:5000/api/admin/users", {
+      headers: { 'auth-token': sessionStorage.getItem('token') }
+    });
     setUsers(await res.json());
   };
 
   const fetchMessages = async () => {
-    const res = await fetch("http://localhost:5000/api/contact/all");
+    const res = await fetch("http://localhost:5000/api/contact/all", {
+      headers: { 'auth-token': sessionStorage.getItem('token') }
+    });
     setMessages(await res.json());
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchUsers(); fetchMessages(); }, []);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Sure? This cannot be undone.")) return;
-    const res = await fetch(`http://localhost:5000/api/admin/user/${id}`, { method: 'DELETE' });
-    if (res.ok) { alert(" User deleted!"); fetchUsers(); }
+    const res = await fetch(`http://localhost:5000/api/admin/user/${id}`, {
+      method: 'DELETE',
+      headers: { 'auth-token': sessionStorage.getItem('token') }
+    });
+    if (res.ok) { showToast('User deleted!', 'success'); fetchUsers(); }
+    else showToast('Failed to delete user', 'error');
   };
 
   const handleMarkRead = async (id) => {
-    await fetch(`http://localhost:5000/api/contact/read/${id}`, { method: 'PUT' });
+    await fetch(`http://localhost:5000/api/contact/read/${id}`, {
+      method: 'PUT',
+      headers: { 'auth-token': sessionStorage.getItem('token') }
+    });
     fetchMessages();
   };
 
   const handleDeleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
-    await fetch(`http://localhost:5000/api/contact/delete/${id}`, { method: 'DELETE' });
+    await fetch(`http://localhost:5000/api/contact/delete/${id}`, {
+      method: 'DELETE',
+      headers: { 'auth-token': sessionStorage.getItem('token') }
+    });
     fetchMessages();
   };
 

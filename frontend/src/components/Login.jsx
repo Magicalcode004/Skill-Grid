@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css'; 
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
@@ -28,11 +30,11 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(" " + data.message);
+        showToast(data.message, 'success');
         
         
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
 
         
         if (data.user.role === 'worker') {
@@ -41,11 +43,11 @@ const Login = () => {
           navigate('/dashboard'); // Client Dashboard
         }
       } else {
-        alert(" Login Failed: " + data.message);
+        showToast('Login Failed: ' + data.message, 'error');
       }
     } catch (error) {
       console.error("Login Error:", error);
-      alert("Server error!.");
+      showToast("Server error!", 'error');
     }
   };
 

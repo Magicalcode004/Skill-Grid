@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ClientDashboard.css';
 import LiveChat from './LiveChat';
+import { useToast } from '../context/ToastContext';
 
 const ClientDashboard = () => {
   const [bookings, setBookings] = useState([]);
@@ -10,9 +11,10 @@ const ClientDashboard = () => {
   const [otpInputs, setOtpInputs] = useState({});
   const [tab, setTab] = useState('all');
   const [activeChat, setActiveChat] = useState(null);
+  const { showToast } = useToast();
 
-  const token = localStorage.getItem('token');
-  const userString = localStorage.getItem('user');
+  const token = sessionStorage.getItem('token');
+  const userString = sessionStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString):null;
 
   const fetchData = async () => {
@@ -38,19 +40,20 @@ const ClientDashboard = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, []);
 
   const handleVerifyOtp = async (bookingId) => {
     const otp = otpInputs[bookingId];
-    if (!otp) return alert('Enter OTP.!');
+    if (!otp) return showToast('Enter OTP.!', 'error');
     const res = await fetch(`http://localhost:5000/api/requests/verify-otp/${bookingId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'auth-token': token },
       body: JSON.stringify({ otp })
     });
     const data = await res.json();
-    if (res.ok) { alert('🎉 ' + data.message); fetchData(); }
-    else alert('❌ ' + data.message);
+    if (res.ok) { showToast(data.message, 'success'); fetchData(); }
+    else showToast(data.message, 'error');
   };
 
   if (loading) return <div className="cd-loading">Loading your dashboard...</div>;

@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Contact = require('../ContactSchema');
+const checkauth = require('../middleware/checkauth');
+const isAdmin = require('../middleware/isAdmin');
 
-// POST — user message bhejta hai
+// POST — user message bhejta hai (public, login zaroori nahi)
 router.post('/send', async (req, res) => {
     try {
         const { name, email, message } = req.body;
@@ -20,7 +22,7 @@ router.post('/send', async (req, res) => {
 });
 
 // GET — admin saare messages dekhta hai
-router.get('/all', async (req, res) => {
+router.get('/all', checkauth, isAdmin, async (req, res) => {
     try {
         const messages = await Contact.find().sort({ createdAt: -1 });
         res.json(messages);
@@ -30,7 +32,7 @@ router.get('/all', async (req, res) => {
 });
 
 // PUT — admin message ko read mark kare
-router.put('/read/:id', async (req, res) => {
+router.put('/read/:id', checkauth, isAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndUpdate(req.params.id, { isRead: true });
         res.json({ message: 'Marked as read' });
@@ -40,7 +42,7 @@ router.put('/read/:id', async (req, res) => {
 });
 
 // DELETE — admin message delete kare
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', checkauth, isAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndDelete(req.params.id);
         res.json({ message: 'Message deleted' });

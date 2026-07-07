@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import BookingModel from './BookingModel';
+import { useToast } from '../context/ToastContext';
 
 const Dashboard = () => {
   const [workers, setWorkers] = useState([]);
   const [selectedWorker, setSelectedWorker] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchWorkers = async () => {
@@ -25,9 +27,9 @@ const Dashboard = () => {
   }, []);
 
   const handleBookClick = (worker) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
-      alert("For Booking, Login First");
+      showToast("For Booking, Login First", 'error');
     } else {
       setSelectedWorker(worker);
     }

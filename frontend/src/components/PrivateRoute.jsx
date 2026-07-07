@@ -1,12 +1,24 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const user  = localStorage.getItem('user');
+const PrivateRoute = ({ children, allowedRoles }) => {
+  const token = sessionStorage.getItem('token');
+  const userString = sessionStorage.getItem('user');
 
-  if (!token || !user || user === 'undefined') {
+  if (!token || !userString || userString === 'undefined') {
     return <Navigate to="/login" replace />;
+  }
+
+  // allowedRoles diya gaya hai toh role bhi check karo
+  if (allowedRoles && allowedRoles.length > 0) {
+    try {
+      const user = JSON.parse(userString);
+      if (!allowedRoles.includes(user.role)) {
+        return <Navigate to="/" replace />;
+      }
+    } catch (err) {
+      return <Navigate to="/login" replace />;
+    }
   }
 
   return children;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import './Auth.css';
+import {useToast} from '../context/ToastContext';
 
 // ─── EmailJS Config —  ───────────────────
 const EMAILJS_SERVICE_ID  = 'service_9efh2kk';
@@ -15,13 +16,16 @@ const STEP_DETAILS = 3; // Role + Worker fields + Password
 
 const Register = () => {
   const navigate = useNavigate();
+  const { showToast} = useToast();
 
   const [step, setStep]           = useState(STEP_BASIC);
   const [loading, setLoading]     = useState(false);
-  const [otpSent, setOtpSent]     = useState('');
   const [otpInput, setOtpInput]   = useState('');
   const [photo, setPhoto]         = useState(null);
   const [preview, setPreview]     = useState(null);
+  const [regToken, setRegToken] = useState('');
+
+
 
   const [formData, setFormData] = useState({
     name:         '',
@@ -50,115 +54,117 @@ const Register = () => {
   };
 
   // ── STEP 1: Send OTP ──────────────────────────────────────
-  const handleSendOtp = async (e) => {
+const handleSendOtp = async (e) => {
     e.preventDefault();
-
     if (!formData.name || !formData.email || !formData.phone) {
-      return alert('Please fill all fields.');
+        return showToast('Please fill all fields.','error');
     }
-
     setLoading(true);
-
     try {
-      // Check if email already exists
-      const checkRes = await fetch('http://localhost:5000/api/auth/check-email', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email: formData.email }),
-      });
-      const checkData = await checkRes.json();
-      if (!checkRes.ok) {
-        alert(checkData.message);
-        setLoading(false);
-        return;
-      }
+        const res = await fetch('http://localhost:5000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.message);
+            setLoading(false);
+            return;
+        }
 
-      // Generate 6-digit OTP
-      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setOtpSent(generatedOtp);
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            { to_email: formData.email, to_name: formData.name, otp: data.otp },
+            EMAILJS_PUBLIC_KEY
+        );
 
-      // Send OTP via EmailJS
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          to_email: formData.email,
-          to_name:  formData.name,
-          otp:      generatedOtp,
-        },
-        EMAILJS_PUBLIC_KEY
-      );
-
-      alert(`OTP sent to ${formData.email}. Please check your inbox.`);
-      setStep(STEP_OTP);
+        showToast(`OTP sent to ${formData.email}. Please check your inbox.`);
+        setStep(STEP_OTP);
 
     } catch (err) {
-      console.error('OTP send error:', err);
-      alert('Failed to send OTP. Check EmailJS config.');
+        console.error('OTP send error:', err);
+        showToast('Failed to send OTP. Check EmailJS config.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // ── STEP 2: Verify OTP ────────────────────────────────────
-  const handleVerifyOtp = (e) => {
+  const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    if (!otpInput) return showToast('Please enter the OTP.');
 
-    if (!otpInput) return alert('Please enter the OTP.');
-
-    if (otpInput.trim() === otpSent.trim()) {
-      setStep(STEP_DETAILS);
-    } else {
-      alert('Incorrect OTP. Please try again.');
-    }
-  };
-
-  // ── Resend OTP ────────────────────────────────────────────
-  const handleResendOtp = async () => {
     setLoading(true);
     try {
-      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setOtpSent(newOtp);
-      setOtpInput('');
+        const res = await fetch('http://localhost:5000/api/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email, otp: otpInput }),
+        });
+        const data = await res.json();
 
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          to_email: formData.email,
-          to_name:  formData.name,
-          otp:      newOtp,
-        },
-        EMAILJS_PUBLIC_KEY
-      );
+        if (!res.ok) { showToast(data.message); return; }
 
-      alert('New OTP sent to your email.');
+        setRegToken(data.regToken);
+        setStep(STEP_DETAILS);
+
     } catch (err) {
-      alert('Failed to resend OTP.');
+        showToast('OTP verification failed. Try again.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
+  // ── Resend OTP ────────────────────────────────────────────
+ const handleResendOtp = async () => {
+    setLoading(true);
+    try {
+        const res = await fetch('http://localhost:5000/api/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email }),
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.message); return; }
+
+        setOtpInput('');
+
+        await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            { to_email: formData.email, to_name: formData.name, otp: data.otp },
+            EMAILJS_PUBLIC_KEY
+        );
+
+        showToast('New OTP sent to your email.');
+    } catch (err) {
+        showToast('Failed to resend OTP.');
+    } finally {
+        setLoading(false);
+    }
+};
 
   // ── STEP 3: Final Registration ────────────────────────────
   const handleRegister = async (e) => {
     e.preventDefault();
 
     if (!formData.password) {
-      return alert('Please enter a password.');
+      return showToast('Please enter a password.');
     }
     if (formData.password !== formData.confirmPassword) {
-      return alert('Passwords do not match.');
+      return showToast('Passwords do not match.');
     }
     if (formData.password.length < 6) {
-      return alert('Password must be at least 6 characters.');
+      return showToast('Password must be at least 6 characters.');
     }
     if (formData.role === 'worker' && !photo) {
-      return alert('Profile photo is required for workers.');
+      return showToast('Profile photo is required for workers.');
     }
     if (formData.role === 'worker' &&
         (!formData.profession || !formData.experience || !formData.location)) {
-      return alert('Please fill all worker details.');
+      return showToast('Please fill all worker details.');
     }
 
     setLoading(true);
@@ -167,6 +173,7 @@ const Register = () => {
       const data = new FormData();
       Object.keys(formData).forEach(key => data.append(key, formData[key]));
       if (photo) data.append('photo', photo);
+      data.append('regToken',regToken);
 
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
@@ -176,14 +183,14 @@ const Register = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert('Account created successfully! Please login.');
+        showToast('Account created successfully! Please login.');
         navigate('/login');
       } else {
-        alert('Error: ' + result.message);
+        showToast('Error: ' + result.message);
       }
     } catch (err) {
       console.error('Register error:', err);
-      alert('Server error. Please try again.');
+      showToast('Server error. Please try again.');
     } finally {
       setLoading(false);
     }

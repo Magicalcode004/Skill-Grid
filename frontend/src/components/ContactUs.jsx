@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import './ContactUs.css';
+import { useToast } from '../context/ToastContext';
 
 // ─── EmailJS Config — 
 const EMAILJS_SERVICE_ID  = 'service_9efh2kk';
@@ -16,9 +17,10 @@ const ContactUs = () => {
   const [form, setForm]       = useState({ name: '', email: '', message: '' });
   const [sent, setSent]       = useState(false);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
-  const token      = localStorage.getItem('token');
-  const userString = localStorage.getItem('user');
+  const token      = sessionStorage.getItem('token');
+  const userString = sessionStorage.getItem('user');
   const user       = userString && userString !== 'undefined'
                       ? JSON.parse(userString) : null;
 
@@ -29,7 +31,7 @@ const ContactUs = () => {
 
     // ── Login check ───────────────────────────────────────
     if (!token || !user) {
-      alert('Please login first to send a message.');
+      showToast('Please login first to send a message.', 'error');
       navigate('/login');
       return;
     }
@@ -47,7 +49,7 @@ const ContactUs = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert('Error: ' + data.message);
+        showToast('Error: ' + data.message, 'error');
         setLoading(false);
         return;
       }
@@ -72,7 +74,7 @@ const ContactUs = () => {
 
     } catch (err) {
       console.error('Contact submit error:', err);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

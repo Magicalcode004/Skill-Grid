@@ -8,14 +8,15 @@ const LiveChat = ({ requestId, currentUser, otherUser, onClose }) => {
     const [loading, setLoading]   = useState(true);
     const messagesEndRef           = useRef(null);
     const socketRef                = useRef(null); // ← socket ref me rakho
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     // ── Socket + History setup ────────────────────────────
     useEffect(() => {
         // 1. new socket connection
         socketRef.current = io('http://localhost:5000', {
-            transports: ['websocket', 'polling'],
-        });
+    transports: ['websocket', 'polling'],
+    auth: { token }
+});
 
         // 2. Room join 
         socketRef.current.emit('join_room', requestId);
@@ -60,7 +61,7 @@ const LiveChat = ({ requestId, currentUser, otherUser, onClose }) => {
         return () => {
             socketRef.current.disconnect();
         };
-    }, [requestId]);
+    }, [requestId, token]);
 
     // ── Auto scroll ───────────────────────────────────────
     useEffect(() => {

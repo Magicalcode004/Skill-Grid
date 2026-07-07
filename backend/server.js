@@ -6,6 +6,9 @@ const http = require('http');
 const { Server } = require('socket.io');
 const connectDB = require('./db.js');
 const Message = require('./MessageSchema');
+const jwt = require('jsonwebtoken');
+const User = require('./UserSchema');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -29,8 +32,25 @@ app.use('/api/admin',    require('./routes/admin'));
 app.use('/api/contact',  require('./routes/contact'));
 app.use('/api/messages', require('./routes/message'));
 
+// Ceck JWT token verify before connecting socket 
+io.use(async (socket, next) => {
+    try {
+        const token = socket.handshake.auth?.token;
+        if (!token) return next(new Error('Authentication required'));
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.user.id).select('name role');
+        if (!user) return next(new Error('User not found'));
+
+        socket.user = { id: user._id.toString(), name: user.name, role: user.role };
+        next();
+    } catch (err) {
+        next(new Error('Invalid or expired token'));
+    }
+});
+
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+    console.log('User connected:', socket.id, '-', socket.user.name);
 
     socket.on('join_room', (requestId) => {
         socket.join(requestId);
@@ -41,8 +61,8 @@ io.on('connection', (socket) => {
         try {
             const newMsg = new Message({
                 requestId:  data.requestId,
-                senderId:   data.senderId,
-                senderName: data.senderName,
+                senderId:   socket.user.id,     // ← client se nahi, verified token se
+                senderName: socket.user.name,   // ← client se nahi, verified token se
                 message:    data.message,
             });
             await newMsg.save();
@@ -50,8 +70,8 @@ io.on('connection', (socket) => {
             io.to(data.requestId).emit('receive_message', {
                 _id:       newMsg._id,
                 requestId: data.requestId,
-                senderId:  data.senderId,
-                senderName:data.senderName,
+                senderId:  socket.user.id,
+                senderName:socket.user.name,
                 message:   data.message,
                 createdAt: newMsg.createdAt,
                 time: new Date(newMsg.createdAt).toLocaleTimeString('en-IN', {

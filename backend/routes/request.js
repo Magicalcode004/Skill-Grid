@@ -56,18 +56,14 @@ router.put('/updatestatus/:id',checkauth, async(req,res)=>
         request = await Request.findByIdAndUpdate(
             req.params.id,
             {$set:{status:status}},
-            {new:true},
-            { returnDocument: 'after' }
+            {new:true}
         );
 
         res.json({message:"Request status update",request});
 
-
     }catch(error){
         console.error("Update Status Error:",error.message);
         res.status(500).send("Server Error");
-
-
     }
 });
 
@@ -92,16 +88,24 @@ router.post('/generate-otp/:id', checkauth, async (req, res) => {
     try {
         const request = await Request.findById(req.params.id);
         if (!request) return res.status(404).json({ message: 'Request not found' });
-        if (request.worker.toString() !== req.user.id)
+
+        // Debug log
+        console.log('Worker from token:', req.user.id);
+        console.log('Worker in request:', request.worker.toString());
+
+        if (request.worker.toString() !== req.user.id.toString())
             return res.status(403).json({ message: 'Not allowed' });
 
-        // 4 digit OTP generate
+        if (request.status !== 'accepted')
+            return res.status(400).json({ message: 'Request not accepted yet' });
+
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
         request.completionOtp = otp;
         await request.save();
 
         res.json({ message: 'OTP generated', otp });
     } catch (err) {
+        console.error('OTP Error:', err.message);
         res.status(500).send('Server Error');
     }
 });

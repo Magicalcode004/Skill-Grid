@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './WorkerDashboard.css';
 import LiveChat from './LiveChat';
+import { useToast } from '../context/ToastContext';
 
 const WorkerDashboard = () => {
   const [requests, setRequests] = useState([]);
@@ -9,41 +10,48 @@ const WorkerDashboard = () => {
   const [loading, setLoading]   = useState(true);
   const [tab, setTab]           = useState('all');
   const [activeChat,setActiveChat]= useState(null);
-  const userString = localStorage.getItem('user');
+  const userString = sessionStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString): null;
 
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
+  const {showToast} = useToast;
 
-  const fetchData = async () => {
+
+const fetchData = async () => {
     try {
-      
       const [profileRes, requestsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/auth/profile',         { headers: { 'auth-token': token } }),
-        fetch('http://localhost:5000/api/requests/myrequest',   { headers: { 'auth-token': token } }),
+        fetch('http://localhost:5000/api/auth/profile',       { headers: { 'auth-token': token } }),
+        fetch('http://localhost:5000/api/requests/myrequest', { headers: { 'auth-token': token } }),
       ]);
+      const profileData  = await profileRes.json();
       const requestsData = await requestsRes.json();
-setRequests(Array.isArray(requestsData) ? requestsData : []);
-      setUser(await profileRes.json());
-      setRequests(await requestsRes.json());
+
+      setUser(profileData);
+      setRequests(Array.isArray(requestsData) ? requestsData : []);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+};
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, []);
 
-  const handleAction = async (id, status) => {
+const handleAction = async (id, status) => {
     const res = await fetch(`http://localhost:5000/api/requests/updatestatus/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'auth-token': token },
       body: JSON.stringify({ status })
     });
+    const data = await res.json();
+    console.log('Update status response:', data);
     if (res.ok) {
       setRequests(requests.map(r => r._id === id ? { ...r, status } : r));
-    } else alert(' Update failed!');
-  };
+    } else {
+      showToast('Update failed: ' + (data.error || data.message || 'Unknown error'));
+    }
+};
 
   const handleGenerateOtp = async (id) => {
     const res = await fetch(`http://localhost:5000/api/requests/generate-otp/${id}`, {
@@ -51,8 +59,8 @@ setRequests(Array.isArray(requestsData) ? requestsData : []);
       headers: { 'auth-token': token }
     });
     const data = await res.json();
-    if (res.ok) alert(` OTP for client: ${data.otp}\n\nUpdate this OTP to client if work is done.`);
-    else alert(' ' + data.message);
+    if (res.ok) showToast(` OTP for client: ${data.otp}\n\nUpdate this OTP to client if work is done.`);
+    else showToast(' ' + data.message);
   };
 
   if (loading) return <div className="wd-loading">Loading your dashboard...</div>;

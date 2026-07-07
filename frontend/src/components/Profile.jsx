@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
+import { useToast } from '../context/ToastContext';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [photo, setPhoto] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         const response = await fetch('http://localhost:5000/api/auth/profile', {
           headers: { 'auth-token': token },
         });
@@ -30,26 +34,45 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
+
+      const data = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== undefined && formData[key] !== null) {
+          data.append(key, formData[key]);
+        }
+      });
+      if (photo) data.append('photo', photo);
+
       const response = await fetch('http://localhost:5000/api/auth/profile', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           'auth-token': token,
         },
-        body: JSON.stringify(formData),
+        body: data,
       });
 
       const result = await response.json();
       if (response.ok) {
-        alert(' ' + result.message);
-        setUserData(formData);
+        showToast(result.message, 'success');
+        setUserData(result.user);
+        setFormData(result.user);
+        setPhoto(null);
+        setPreview(null);
         setIsEditing(false);
       } else {
-        alert(' Error updating profile');
+        showToast('Error updating profile', 'error');
       }
     } catch (error) {
       console.log(error);
@@ -74,9 +97,11 @@ const Profile = () => {
           
           <div className="worker-profile-image">
             <img
-              src={userData.photo 
-                ? `http://localhost:5000${userData.photo}` 
-                : `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=fdb441&color=1a1a1a&bold=true&size=150`}
+              src={preview
+                ? preview
+                : userData.photo 
+                  ? `http://localhost:5000${userData.photo}` 
+                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=fdb441&color=1a1a1a&bold=true&size=150`}
               alt="Profile"
               onError={(e) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=fdb441&color=1a1a1a&bold=true&size=150`;
@@ -132,6 +157,17 @@ const Profile = () => {
         ) : (
           <form onSubmit={handleUpdate} className="worker-profile-form">
             <div className="form-grid">
+
+              <div className="worker-profile-input-group">
+                <label>Profile Photo</label>
+                <input
+                  type="file"
+                  accept="image/jpeg, image/png, image/webp"
+                  onChange={handlePhotoChange}
+                  className="file-input"
+                />
+              </div>
+
               <div className="worker-profile-input-group">
                 <label>Full Name</label>
                 <input type="text" name="name" value={formData.name || ""} onChange={handleChange} required />
@@ -157,7 +193,6 @@ const Profile = () => {
                     <input type="number" name="experience" value={formData.experience || ""} onChange={handleChange} />
                   </div>
                   
-                  {/* New Charge Fields (Grid takes 2 columns, so we wrap these beautifully) */}
                   <div className="charge-inputs-wrapper">
                      <div className="worker-profile-input-group">
                         <label>Charge Amount (₹)</label>
@@ -179,7 +214,7 @@ const Profile = () => {
 
             <div className="worker-profile-button-group">
               <button type="submit" className="worker-profile-btn save-btn">💾 Save Changes</button>
-              <button type="button" className="worker-profile-cancel-btn" onClick={() => setIsEditing(false)}>✖ Cancel</button>
+              <button type="button" className="worker-profile-cancel-btn" onClick={() => { setIsEditing(false); setPhoto(null); setPreview(null); }}>✖ Cancel</button>
             </div>
           </form>
         )}
