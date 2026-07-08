@@ -130,3 +130,15 @@
     gap: 20px;
   }
 }
+/* Active link highlight */
+.nav-item.active {
+  color: #fdb441;
+}
+
+.nav-item.active:not(.nav-btn)::after {
+  width: 100%;
+}
+
+.admin-link.active {
+  color: #ff4d4f !important;
+}

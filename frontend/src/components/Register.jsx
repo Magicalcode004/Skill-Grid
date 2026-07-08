@@ -6,7 +6,7 @@ import {useToast} from '../context/ToastContext';
 
 
 
-// ─── Steps ────────────────────────────────────────────────
+// ─── Steps 
 const STEP_BASIC   = 1; // Name, Email, Phone
 const STEP_OTP     = 2; // OTP verification
 const STEP_DETAILS = 3; // Role + Worker fields + Password
@@ -50,7 +50,7 @@ const Register = () => {
     }
   };
 
-  // ── STEP 1: Send OTP ──────────────────────────────────────
+  // ── STEP 1: Send OTP 
 const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) {
@@ -81,7 +81,7 @@ setStep(STEP_OTP);
     }
 };
 
-  // ── STEP 2: Verify OTP ────────────────────────────────────
+  // ── STEP 2: Verify OTP 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (!otpInput) return showToast('Please enter the OTP.');
@@ -107,7 +107,7 @@ setStep(STEP_OTP);
     }
 };
 
-  // ── Resend OTP ────────────────────────────────────────────
+  // ── Resend OTP
  const handleResendOtp = async () => {
     setLoading(true);
     try {
@@ -128,7 +128,7 @@ showToast('New OTP sent to your email.');
     }
 };
 
-  // ── STEP 3: Final Registration ────────────────────────────
+  // ── STEP 3: Final Registration 
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -178,7 +178,7 @@ showToast('New OTP sent to your email.');
     }
   };
 
-  // ─── Render ───────────────────────────────────────────────
+  // ─── Render 
   return (
     <div className="auth-page">
       <div className="auth-container">

@@ -29,12 +29,12 @@ const ClientDashboard = () => {
 
       setUser(profileData);
 
-      // Safety check — agar array nahi aaya toh empty array set karo
+      // Safety check — if not array then set empty
       setBookings(Array.isArray(bookingsData) ? bookingsData : []);
 
     } catch (err) {
       console.error(err);
-      setBookings([]); // error pe bhi crash mat karo
+      setBookings([]); // No crash on error 
     } finally {
       setLoading(false);
     }

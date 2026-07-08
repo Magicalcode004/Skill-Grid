@@ -4,7 +4,7 @@ const Contact = require('../ContactSchema');
 const checkauth = require('../middleware/checkauth');
 const isAdmin = require('../middleware/isAdmin');
 
-// POST — user message bhejta hai (public, login zaroori nahi)
+// POST — user sent message (public, no login needed)
 router.post('/send', async (req, res) => {
     try {
         const { name, email, message } = req.body;
@@ -21,7 +21,7 @@ router.post('/send', async (req, res) => {
     }
 });
 
-// GET — admin saare messages dekhta hai
+// GET — all message seen by admin
 router.get('/all', checkauth, isAdmin, async (req, res) => {
     try {
         const messages = await Contact.find().sort({ createdAt: -1 });
@@ -31,7 +31,7 @@ router.get('/all', checkauth, isAdmin, async (req, res) => {
     }
 });
 
-// PUT — admin message ko read mark kare
+// PUT — admin message mark
 router.put('/read/:id', checkauth, isAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndUpdate(req.params.id, { isRead: true });
@@ -41,7 +41,7 @@ router.put('/read/:id', checkauth, isAdmin, async (req, res) => {
     }
 });
 
-// DELETE — admin message delete kare
+// DELETE — admin message delete 
 router.delete('/delete/:id', checkauth, isAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndDelete(req.params.id);

@@ -9,7 +9,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // allowedRoles diya gaya hai toh role bhi check karo
+  // allowedRoles is given theck the role
   if (allowedRoles && allowedRoles.length > 0) {
     try {
       const user = JSON.parse(userString);

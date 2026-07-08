@@ -12,7 +12,7 @@ const router = express.Router();
 
 const otpStore = new Map();
 
-// STEP 1: OTP generate karo (backend se)
+// STEP 1: OTP generate 
 router.post('/send-otp', async (req, res) => {
     try {
         const { email, name } = req.body;
@@ -38,7 +38,7 @@ router.post('/send-otp', async (req, res) => {
     }
 });
 
-// STEP 2: OTP verify karo (backend se)
+// STEP 2: OTP verify (backend)
 router.post('/verify-otp', (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -65,7 +65,7 @@ router.post('/register', upload.single('photo'), async (req, res) => {
     try {
         const { name, email, password, phone, role, profession, experience, location, regToken } = req.body;
 
-        // Security: OTP verify kiye bina register na ho
+        // Security: No registration until OTP verified
         if (!regToken) return res.status(403).json({ message: 'Email verification required. Please verify OTP first.' });
 
         let decoded;
@@ -164,7 +164,7 @@ router.put('/profile', checkauth, upload.single('photo'), async (req, res) => {
             if (chargeAmount) user.chargeAmount = chargeAmount;
         }
 
-        // Naya photo upload hua ho toh update karo
+        // If new photo upload then update
         if (req.file) {
             user.photo = `/uploads/${req.file.filename}`;
         }
@@ -182,7 +182,7 @@ router.put('/profile', checkauth, upload.single('photo'), async (req, res) => {
 
 
 
-// Check email exists or not — OTP step se pehle
+// Check email exists or not — before OTP
 router.post('/check-email', async (req, res) => {
     try {
         const { email } = req.body;
